@@ -1,0 +1,14 @@
+extends layout
+
+block content
+  h1 Sign Up
+  form(action="/sign-up" method="post")
+    label(for="username")
+    input(type="text" name="username" id="username" required)
+    label(for="password")
+    input(type="password", name="password" for="password")
+    button(type="submit") Register
+  if errors
+    ul
+      each error in errors
+        li #{error.msg || error.message}
