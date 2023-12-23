@@ -3,8 +3,8 @@ const { Schema } = mongoose;
 const bcrypt = require("bcryptjs");
 
 const UserSchema = new Schema({
-  username: { type: String, required: true },
-  password: { type: String, required: true },
+  username: { type: String, required: true, trim: true },
+  password: { type: String, required: true, minLength: 8 },
 });
 
 UserSchema.methods.generateHash = function (password) {
@@ -15,4 +15,4 @@ UserSchema.methods.validatePassword = function (password) {
   return bcrypt.compare(password, this.password);
 };
 
-module.exports = new mongoose.model("User", UserSchema);
+module.exports = mongoose.model("User", UserSchema);
