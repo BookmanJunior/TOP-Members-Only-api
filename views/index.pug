@@ -3,3 +3,19 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
+  if currentUser
+    h2 Welcome, #{currentUser.username}
+  else
+    form(action="/log-in" method="post")
+      label(for="username") Username: 
+      input(type="text", name="username" id="username" required)
+      label(for="password") Password: 
+      input(type="password", name="password" id="password")
+      button(type="submit") Log In  
+      br
+      p No Account? 
+        a(href="/sign-up") Sign Up 
+  if errors
+    each error in errors
+      ul 
+        li #{error.msg}
