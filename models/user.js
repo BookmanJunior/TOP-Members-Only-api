@@ -1,5 +1,4 @@
-const mongoose = require("mongoose");
-const { Schema } = mongoose;
+const { Schema, model } = require("mongoose");
 const Message = require("./message");
 const bcrypt = require("bcryptjs");
 
@@ -17,4 +16,4 @@ UserSchema.methods.validatePassword = function (password) {
   return bcrypt.compare(password, this.password);
 };
 
-module.exports = mongoose.model("User", UserSchema);
+module.exports = model("User", UserSchema);
