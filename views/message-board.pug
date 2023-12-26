@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  if currentUser
+    form(action="" method="post")
+      label(for="message") Message: 
+      br
+      textarea(name="message", id="message" cols="30", rows="10" required)
+      br
+      input(type="hidden", name="userId" value=currentUser._id)
+      button(type="submit") Submit  
+    if (messages)
+    else
+      h2 Message Board Is Empty
+  else
+    h2 Please log in to messages here.
+      a(href="/") Log In
