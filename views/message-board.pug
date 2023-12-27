@@ -2,14 +2,22 @@ extends layout
 
 block content
   if currentUser
-    form(action="" method="post")
+    form(method="post")
       label(for="message") Message: 
       br
-      textarea(name="message", id="message" cols="30", rows="10" required)
+      textarea(name="message", id="message" cols="30", rows="10" required) 
       br
       input(type="hidden", name="userId" value=currentUser._id)
       button(type="submit") Submit  
-    if (messages)
+    if (errors)
+      each error in errors
+        ul 
+          li #{error.msg}
+    if (messages.length)
+      each message in messages
+        p #{message.user.username}
+        p #{message.message}
+        p #{message.date}
     else
       h2 Message Board Is Empty
   else
