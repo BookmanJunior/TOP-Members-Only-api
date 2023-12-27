@@ -1,11 +1,10 @@
 const { Schema, model } = require("mongoose");
-const Message = require("./message");
 const bcrypt = require("bcryptjs");
 
 const UserSchema = new Schema({
   username: { type: String, required: true, trim: true },
   password: { type: String, required: true, minLength: 8 },
-  messages: [{ type: Schema.Types.ObjectId, ref: Message }],
+  messages: [{ type: Schema.Types.ObjectId, ref: "Message" }],
 });
 
 UserSchema.methods.generateHash = function (password) {
