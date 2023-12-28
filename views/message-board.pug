@@ -17,7 +17,7 @@ block content
       each message in messages
         p #{message.user.username}
         p #{message.message}
-        p #{message.date}
+        p #{message.formatted_date}
     else
       h2 Message Board Is Empty
   else
