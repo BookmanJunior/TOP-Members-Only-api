@@ -18,6 +18,11 @@ block content
         p #{message.user.username}
         p #{message.message}
         p #{message.formatted_date}
+        if currentUser.admin === true 
+          form(action="/message-board/delete-message" method="post")
+            input(type="hidden", name="userId" value=message.user._id) 
+            input(type="hidden", name="messageId" value=message._id) 
+            button(type="submit") Delete
     else
       h2 Message Board Is Empty
   else
