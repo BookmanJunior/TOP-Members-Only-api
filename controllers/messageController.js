@@ -41,6 +41,21 @@ exports.message_post = [
   }),
 ];
 
+exports.delete_message_post = async (req, res, next) => {
+  try {
+    await Promise.all([
+      Message.findByIdAndDelete(req.body.messageId),
+      User.findByIdAndUpdate(req.body.userId, {
+        $pull: { messages: req.body.messageId },
+      }),
+    ]);
+  } catch (error) {
+    next(error);
+  } finally {
+    res.redirect("/message-board");
+  }
+};
+
 async function getAllMessages() {
   return await Message.find({}).populate("user").sort({ date: -1 }).exec();
 }
