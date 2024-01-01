@@ -25,7 +25,14 @@ exports.sign_up_post = [
     .trim()
     .isLength({ min: 8 })
     .escape(),
-
+  body("confirm-password")
+    .trim()
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters long.")
+    .custom(async (value, { req }) => {
+      if (req.body.password !== value) throw new Error("Password don't match.");
+    })
+    .escape(),
   asyncHandler(async (req, res, next) => {
     const error = validationResult(req);
 
