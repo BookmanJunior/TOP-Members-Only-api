@@ -52,7 +52,6 @@ app.use((req, res, next) => {
 });
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
 app.use("/sign-up", signUpRouter);
 app.use("/message-board", messageBoardRouter);
 app.use("/log-in", usersRouter);
