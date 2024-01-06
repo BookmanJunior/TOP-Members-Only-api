@@ -6,7 +6,7 @@ block content
   if currentUser
     h2 Welcome, #{currentUser.username}
   else
-    form(action="/log-in" method="post")
+    form(action="/login" method="post")
       label(for="username") Username: 
       input(type="text", name="username" id="username" required)
       label(for="password") Password: 
