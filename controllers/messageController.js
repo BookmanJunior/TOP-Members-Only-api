@@ -6,7 +6,7 @@ const User = require("../models/user");
 exports.messages_get = asyncHandler(async (req, res, next) => {
   const messages = await getAllMessages();
 
-  res.render("message-board", { messages });
+  res.send(messages);
 });
 
 exports.message_post = [
@@ -28,7 +28,7 @@ exports.message_post = [
     if (!error.isEmpty()) {
       const messages = await getAllMessages();
 
-      res.render("message-board", { messages, errors: error.array() });
+      res.send({ error, messages });
     } else {
       await Promise.all([
         message.save(),
@@ -36,7 +36,8 @@ exports.message_post = [
           $push: { messages: message._id },
         }),
       ]);
-      res.redirect("/message-board");
+      const messages = await getAllMessages();
+      res.send(messages);
     }
   }),
 ];
@@ -49,13 +50,17 @@ exports.delete_message_post = async (req, res, next) => {
         $pull: { messages: req.body.messageId },
       }),
     ]);
+
+    const messages = await getAllMessages();
+    res.send(messages);
   } catch (error) {
-    next(error);
-  } finally {
-    res.redirect("/message-board");
+    res.send(error);
   }
 };
 
 async function getAllMessages() {
-  return await Message.find({}).populate("user").sort({ date: -1 }).exec();
+  return await Message.find({}, { __v: 0 })
+    .populate("user", "username -_id")
+    .sort({ date: -1 })
+    .exec();
 }
