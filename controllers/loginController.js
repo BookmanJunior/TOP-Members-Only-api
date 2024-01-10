@@ -47,11 +47,12 @@ exports.login_post = (req, res, next) => {
         secure: true,
         httpOnly: true,
         maxAge: expirationDate.setDate(expirationDate.getDate() + 7),
+        sameSite: "none",
       };
 
       res.cookie("jwt-token", token, cookieOptions);
 
-      return res.json({ token });
+      return res.json({ user: user._id });
     } catch (err) {
       return res.sendStatus(401);
     }
