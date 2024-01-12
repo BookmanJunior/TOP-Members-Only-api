@@ -58,3 +58,18 @@ exports.login_post = (req, res, next) => {
     }
   })(req, res, next);
 };
+
+exports.automatic_login = async (req, res, next) => {
+  const token = req.cookies["jwt-token"];
+
+  if (!token) {
+    return res.sendStatus(403);
+  }
+
+  try {
+    const data = jwt.verify(token, process.env.SECRET_TOKEN_KEY);
+    res.json({ user: data.user._id });
+  } catch (error) {
+    res.sendStatus(403);
+  }
+};
