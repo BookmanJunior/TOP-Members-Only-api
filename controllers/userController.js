@@ -1,6 +1,8 @@
 const User = require("../models/user");
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 exports.sign_up_get = asyncHandler(async (req, res, next) => {
   res.render("sign-up");
@@ -50,6 +52,25 @@ exports.sign_up_post = [
     }
 
     await user.save();
-    res.redirect("/");
+
+    const body = { _id: user._id, username: user.username, admin: user.admin };
+    const token = jwt.sign({ user: body }, process.env.SECRET_TOKEN_KEY, {
+      expiresIn: "10m",
+    });
+
+    const expirationDate = new Date();
+
+    const cookieOptions = {
+      secure: true,
+      httpOnly: true,
+      sameSite: "none",
+      maxAge: expirationDate.setDate(expirationDate.getDate() + 7),
+    };
+
+    res.cookie("jwt-token", token, cookieOptions);
+
+    res.json({
+      user: { id: user._id, username: user.username, admin: user.admin },
+    });
   }),
 ];

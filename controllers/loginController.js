@@ -36,7 +36,11 @@ exports.login_post = (req, res, next) => {
       req.logIn(user, { session: false }, (err) => {
         if (err) return res.sendStatus(401);
       });
-      const body = { _id: user._id, username: user.username };
+      const body = {
+        _id: user._id,
+        username: user.username,
+        admin: user.admin,
+      };
       const token = jwt.sign({ user: body }, process.env.SECRET_TOKEN_KEY, {
         expiresIn: "10m",
       });
@@ -52,7 +56,9 @@ exports.login_post = (req, res, next) => {
 
       res.cookie("jwt-token", token, cookieOptions);
 
-      return res.json({ user: user._id });
+      return res.json({
+        user: { id: user._id, username: user.username, admin: user.admin },
+      });
     } catch (err) {
       return res.sendStatus(401);
     }
@@ -68,7 +74,13 @@ exports.automatic_login = async (req, res, next) => {
 
   try {
     const data = jwt.verify(token, process.env.SECRET_TOKEN_KEY);
-    res.json({ user: data.user._id });
+    res.json({
+      user: {
+        id: data.user._id,
+        username: data.user.username,
+        admin: data.user.admin,
+      },
+    });
   } catch (error) {
     res.sendStatus(403);
   }
