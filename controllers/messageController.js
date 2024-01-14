@@ -46,9 +46,12 @@ exports.delete_message_post = async (req, res, next) => {
   try {
     await Promise.all([
       Message.findByIdAndDelete(req.body.messageId),
-      User.findByIdAndUpdate(req.body.userId, {
-        $pull: { messages: req.body.messageId },
-      }),
+      User.findOneAndUpdate(
+        { username: req.body.username },
+        {
+          $pull: { messages: req.body.messageId },
+        }
+      ),
     ]);
 
     const messages = await getAllMessages();
