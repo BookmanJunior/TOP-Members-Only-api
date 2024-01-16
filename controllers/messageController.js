@@ -26,9 +26,7 @@ exports.message_post = [
     });
 
     if (!error.isEmpty()) {
-      const messages = await getAllMessages();
-
-      res.send({ error, messages });
+      res.status(400).send(error.array());
     } else {
       await Promise.all([
         message.save(),
@@ -36,8 +34,7 @@ exports.message_post = [
           $push: { messages: message._id },
         }),
       ]);
-      const messages = await getAllMessages();
-      res.send(messages);
+      res.send(message);
     }
   }),
 ];
