@@ -41,18 +41,21 @@ exports.message_post = [
 
 exports.delete_message_post = async (req, res, next) => {
   try {
-    await Promise.all([
-      Message.findByIdAndDelete(req.body.messageId),
-      User.findOneAndUpdate(
-        { username: req.body.username },
-        {
-          $pull: { messages: req.body.messageId },
-        }
-      ),
-    ]);
+    if (req.body.admin) {
+      await Promise.all([
+        Message.findByIdAndDelete(req.body.messageId),
+        User.findOneAndUpdate(
+          { username: req.body.username },
+          {
+            $pull: { messages: req.body.messageId },
+          }
+        ),
+      ]);
+      const messages = await getAllMessages();
+      return res.send(messages);
+    }
 
-    const messages = await getAllMessages();
-    res.send(messages);
+    res.status(403).send("Don't have permission.");
   } catch (error) {
     res.send(error);
   }
