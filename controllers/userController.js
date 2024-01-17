@@ -30,9 +30,10 @@ exports.sign_up_post = [
   body("confirm-password")
     .trim()
     .isLength({ min: 8 })
-    .withMessage("Password must be at least 8 characters long.")
+    .withMessage("Confirm Password must be at least 8 characters long.")
     .custom(async (value, { req }) => {
-      if (req.body.password !== value) throw new Error("Password don't match.");
+      if (req.body.password !== value)
+        throw new Error("Passwords don't match.");
     })
     .escape(),
   asyncHandler(async (req, res, next) => {
@@ -47,8 +48,7 @@ exports.sign_up_post = [
       .then((hashedPassword) => (user.password = hashedPassword));
 
     if (!error.isEmpty()) {
-      res.render("sign-up", { user, errors: error.array() });
-      return;
+      return res.status(400).send(error.array());
     }
 
     await user.save();
