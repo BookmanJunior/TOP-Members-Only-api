@@ -4,11 +4,11 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const mongoose = require("mongoose");
-const session = require("express-session");
 const passport = require("passport");
-const flash = require("connect-flash");
 const helmet = require("helmet");
 const { rateLimit } = require("express-rate-limit");
+const cors = require("cors");
+const auth = require("./auth/auth");
 require("dotenv").config();
 
 main().catch((error) => debug(error));
@@ -22,29 +22,27 @@ const RateLimiter = rateLimit({
   limit: 100,
 });
 
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
+const indexRouter = require("./routes/index");
+const authRouter = require("./routes/authentication");
 const signUpRouter = require("./routes/sign-up");
 const messageBoardRouter = require("./routes/message-board");
 
 var app = express();
-
-// view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "pug");
 
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
-app.use(flash());
 app.use(passport.initialize());
-app.use(passport.session());
-app.use(express.urlencoded({ extended: false }));
 app.use(helmet());
 app.use(RateLimiter);
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 app.use((req, res, next) => {
   res.locals.currentUser = req.user;
@@ -53,8 +51,8 @@ app.use((req, res, next) => {
 
 app.use("/", indexRouter);
 app.use("/sign-up", signUpRouter);
-app.use("/message-board", messageBoardRouter);
-app.use("/log-in", usersRouter);
+app.use("/message-board", auth.verifyJWT, messageBoardRouter);
+app.use("/auth", authRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
