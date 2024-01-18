@@ -43,11 +43,11 @@ exports.delete_message_post = async (req, res, next) => {
   try {
     if (req.body.admin) {
       await Promise.all([
-        Message.findByIdAndDelete(req.body.messageId),
+        Message.findByIdAndDelete(req.params.messageId),
         User.findOneAndUpdate(
           { username: req.body.username },
           {
-            $pull: { messages: req.body.messageId },
+            $pull: { messages: req.params.messageId },
           }
         ),
       ]);
