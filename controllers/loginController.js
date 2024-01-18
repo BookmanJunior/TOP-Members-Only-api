@@ -30,7 +30,7 @@ exports.login_post = (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     try {
       if (err || !user) {
-        return res.send(info);
+        return res.status(401).send(info || err);
       }
 
       req.logIn(user, { session: false }, (err) => {
@@ -83,5 +83,16 @@ exports.automatic_login = async (req, res, next) => {
     });
   } catch (error) {
     res.sendStatus(403);
+  }
+};
+
+exports.logout = async (req, res, next) => {
+  try {
+    return res
+      .status(200)
+      .clearCookie("jwt-token")
+      .send({ message: "Successfully logged you out." });
+  } catch (error) {
+    return next(error);
   }
 };
