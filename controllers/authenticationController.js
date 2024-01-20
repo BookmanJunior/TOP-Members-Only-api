@@ -57,7 +57,12 @@ exports.login_post = (req, res, next) => {
       res.cookie("jwt-token", token, cookieOptions);
 
       return res.json({
-        user: { id: user._id, username: user.username, admin: user.admin },
+        user: {
+          id: user._id,
+          username: user.username,
+          admin: user.admin,
+          avatar: user.avatar,
+        },
       });
     } catch (err) {
       return res.sendStatus(401);

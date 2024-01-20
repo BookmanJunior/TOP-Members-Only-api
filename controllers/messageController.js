@@ -16,7 +16,7 @@ exports.message_post = [
     .escape(),
   body("userId", "Missing valid User ID").trim().isLength({ min: 1 }).escape(),
 
-  asyncHandler(async (req, res, next) => {
+  async (req, res, next) => {
     const error = validationResult(req);
 
     const message = new Message({
@@ -28,15 +28,19 @@ exports.message_post = [
     if (!error.isEmpty()) {
       res.status(400).send(error.array());
     } else {
-      await Promise.all([
-        message.save(),
-        User.findByIdAndUpdate(req.body.userId, {
-          $push: { messages: message._id },
-        }),
-      ]);
-      res.send(message);
+      try {
+        await Promise.all([
+          message.save(),
+          User.findByIdAndUpdate(req.body.userId, {
+            $push: { messages: message._id },
+          }),
+        ]);
+        res.send(message);
+      } catch (error) {
+        return res.status(400).send({ message: "Something went wrong" });
+      }
     }
-  }),
+  },
 ];
 
 exports.delete_message_post = async (req, res, next) => {
@@ -63,7 +67,7 @@ exports.delete_message_post = async (req, res, next) => {
 
 async function getAllMessages() {
   return await Message.find({}, { __v: 0 })
-    .populate("user", "username -_id")
+    .populate("user", "username avatar -_id")
     .sort({ date: -1 })
     .exec();
 }
