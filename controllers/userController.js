@@ -36,11 +36,29 @@ exports.sign_up_post = [
         throw new Error("Passwords don't match.");
     })
     .escape(),
+  body("avatar")
+    .trim()
+    .custom(async (value) => {
+      const validAvatars = [
+        "gray",
+        "red",
+        "pink",
+        "brown",
+        "yellow",
+        "lime",
+        "orange",
+        "green",
+      ];
+      if (!validAvatars.includes(value))
+        throw new Error("Please choose an avatar.");
+    })
+    .escape(),
   asyncHandler(async (req, res, next) => {
     const error = validationResult(req);
 
     const user = new User({
       username: req.body.username,
+      avatar: req.body.avatar,
     });
 
     await user
@@ -70,7 +88,12 @@ exports.sign_up_post = [
     res.cookie("jwt-token", token, cookieOptions);
 
     res.json({
-      user: { id: user._id, username: user.username, admin: user.admin },
+      user: {
+        id: user._id,
+        username: user.username,
+        admin: user.admin,
+        avatar: user.avatar,
+      },
     });
   }),
 ];
