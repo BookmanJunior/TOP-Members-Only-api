@@ -13,6 +13,8 @@ exports.message_post = [
   body("message", "Message can't be empty.")
     .trim()
     .isLength({ min: 1 })
+    .isLength({ max: 150 })
+    .withMessage("Your message is over the character limit.")
     .escape(),
   body("userId", "Missing valid User ID").trim().isLength({ min: 1 }).escape(),
 
