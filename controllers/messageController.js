@@ -70,6 +70,6 @@ exports.delete_message_post = async (req, res, next) => {
 async function getAllMessages() {
   return await Message.find({}, { __v: 0 })
     .populate("user", "username avatar -_id")
-    .sort({ date: -1 })
+    .sort({ date: 1 })
     .exec();
 }
