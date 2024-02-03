@@ -14,8 +14,7 @@ exports.message_post = [
     .trim()
     .isLength({ min: 1 })
     .isLength({ max: 150 })
-    .withMessage("Your message is over the character limit.")
-    .escape(),
+    .withMessage("Your message is over the character limit."),
   body("userId", "Missing valid User ID").trim().isLength({ min: 1 }).escape(),
 
   async (req, res, next) => {
