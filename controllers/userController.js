@@ -44,7 +44,7 @@ exports.sign_up_post = [
         "red",
         "pink",
         "brown",
-        "yellow",
+        "blue",
         "lime",
         "orange",
         "green",
