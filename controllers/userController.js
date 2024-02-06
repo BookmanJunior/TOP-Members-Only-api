@@ -27,7 +27,7 @@ exports.sign_up_post = [
     .trim()
     .isLength({ min: 8 })
     .escape(),
-  body("confirm-password")
+  body("confirmPassword")
     .trim()
     .isLength({ min: 8 })
     .withMessage("Confirm Password must be at least 8 characters long.")
