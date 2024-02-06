@@ -4,19 +4,27 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
+const errorArr = [
+  {
+    type: "field",
+    msg: "Incorrect username or password.",
+    path: "login",
+  },
+];
+
 passport.use(
   new LocalStrategy(async (username, password, done) => {
     try {
       const user = await User.findOne({ username: username }).exec();
 
       if (!user) {
-        return done(null, false, { message: "Username not found." });
+        return done(null, false, errorArr);
       }
 
       const isValidPassword = await user.validatePassword(password);
 
       if (!isValidPassword) {
-        return done(null, false, { message: "Incorrect password." });
+        return done(null, false, errorArr);
       }
 
       return done(null, user);
@@ -29,8 +37,12 @@ passport.use(
 exports.login_post = (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     try {
-      if (err || !user) {
-        return res.status(401).send(info || err);
+      if (!user) {
+        return res.status(401).send(errorArr);
+      }
+
+      if (err) {
+        return res.status(401).send(err);
       }
 
       req.logIn(user, { session: false }, (err) => {
