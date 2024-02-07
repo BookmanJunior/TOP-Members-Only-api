@@ -36,7 +36,8 @@ exports.message_post = [
             $push: { messages: message._id },
           }),
         ]);
-        res.send(message);
+        const messages = await getAllMessages();
+        return res.send(messages);
       } catch (error) {
         return res.status(400).send({ message: "Something went wrong" });
       }
