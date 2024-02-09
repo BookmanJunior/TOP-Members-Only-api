@@ -13,6 +13,7 @@ exports.verifyJWT = async (req, res, next) => {
     req.body.userId = data.user._id;
     req.body.username = data.user.username;
     req.body.admin = data.user.admin;
+    req.body.avatar = data.user.avatar;
     return next();
   } catch (error) {
     return res.sendStatus(403);
