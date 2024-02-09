@@ -52,7 +52,9 @@ exports.login_post = (req, res, next) => {
         _id: user._id,
         username: user.username,
         admin: user.admin,
+        avatar: user.avatar,
       };
+
       const token = jwt.sign({ user: body }, process.env.SECRET_TOKEN_KEY, {
         expiresIn: "10m",
       });
@@ -96,6 +98,7 @@ exports.automatic_login = async (req, res, next) => {
         id: data.user._id,
         username: data.user.username,
         admin: data.user.admin,
+        avatar: data.user.avatar,
       },
     });
   } catch (error) {
