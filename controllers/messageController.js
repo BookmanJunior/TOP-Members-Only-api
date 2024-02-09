@@ -6,7 +6,14 @@ const User = require("../models/user");
 exports.messages_get = asyncHandler(async (req, res, next) => {
   const messages = await getAllMessages();
 
-  res.send(messages);
+  const user = {
+    username: req.body.username,
+    admin: req.body.admin,
+    avatar: req.body.avatar,
+    id: req.body.userId,
+  };
+
+  res.send({ messages, user });
 });
 
 exports.message_post = [
