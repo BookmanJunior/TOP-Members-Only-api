@@ -44,11 +44,6 @@ app.use(
   })
 );
 
-app.use((req, res, next) => {
-  res.locals.currentUser = req.user;
-  next();
-});
-
 app.use("/", indexRouter);
 app.use("/sign-up", signUpRouter);
 app.use("/message-board", auth.verifyJWT, messageBoardRouter);
