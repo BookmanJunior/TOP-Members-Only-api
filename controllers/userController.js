@@ -9,9 +9,15 @@ exports.sign_up_get = asyncHandler(async (req, res, next) => {
 });
 
 exports.sign_up_post = [
-  body("username", "Username can't be empty.")
-    .trim()
-    .isLength({ min: 1, max: 15 })
+  body("username")
+    .custom(async (value) => {
+      const trimmedValue = value.trim();
+      if (!trimmedValue.length || value < 4) {
+        throw new Error("Username must be at least 4 characters long.");
+      }
+    })
+    .isLength({ max: 13 })
+    .withMessage("Username can't be longer than 12 characters.")
     .custom(async (value) => {
       const user = await User.find({ username: value })
         .collation({ locale: "en", strength: 2 })
