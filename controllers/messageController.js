@@ -26,11 +26,11 @@ exports.message_post = [
   async (req, res, next) => {
     const error = validationResult(req);
     const currentUser = res.locals.currentUser;
-    
+
     const message = new Message({
       message: req.body.message,
       date: new Date(),
-      user: currentUser.username,
+      user: currentUser._id,
     });
 
     if (!error.isEmpty()) {
