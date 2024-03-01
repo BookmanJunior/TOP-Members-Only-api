@@ -22,32 +22,32 @@ exports.message_post = [
     .isLength({ min: 1 })
     .isLength({ max: 150 })
     .withMessage("Your message is over the character limit."),
-  body("userId", "Missing valid User ID").trim().isLength({ min: 1 }).escape(),
 
   async (req, res, next) => {
     const error = validationResult(req);
-
+    const currentUser = res.locals.currentUser;
+    
     const message = new Message({
       message: req.body.message,
       date: new Date(),
-      user: req.body.userId,
+      user: currentUser.username,
     });
 
     if (!error.isEmpty()) {
-      res.status(400).send(error.array());
-    } else {
-      try {
-        await Promise.all([
-          message.save(),
-          User.findByIdAndUpdate(req.body.userId, {
-            $push: { messages: message._id },
-          }),
-        ]);
-        const messages = await getAllMessages();
-        return res.send({ newMessage: message._id, messages });
-      } catch (error) {
-        return res.status(400).send({ message: "Something went wrong" });
-      }
+      return res.status(400).send(error.array());
+    }
+    try {
+      //make this operation atomic
+      await Promise.all([
+        message.save(),
+        User.findByIdAndUpdate(currentUser._id, {
+          $push: { messages: message._id },
+        }),
+      ]);
+      const messages = await getAllMessages();
+      return res.send({ newMessage: message._id, messages });
+    } catch (error) {
+      return res.status(400).send([{ msg: error._message }]);
     }
   },
 ];
@@ -55,7 +55,7 @@ exports.message_post = [
 exports.message_delete = async (req, res, next) => {
   //make this operation atomic
   try {
-    if (req.body.admin) {
+    if (res.locals.currentUser.admin) {
       await Promise.all([
         Message.findByIdAndDelete(req.params.messageId),
         User.findOneAndUpdate(
@@ -69,7 +69,7 @@ exports.message_delete = async (req, res, next) => {
       return res.send(messages);
     }
 
-    res.status(403).send("Don't have permission.");
+    res.sendStatus(403);
   } catch (error) {
     res.send(error);
   }
