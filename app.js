@@ -29,6 +29,18 @@ const messageBoardRouter = require("./routes/message-board");
 
 var app = express();
 
+const corsOptions = {
+  origin: "",
+  credentials: true,
+};
+
+corsOptions.origin =
+  process.env.NODE_ENV === "production"
+    ? "https://top-members-only-frontend-76ba.vercel.app"
+    : "http://localhost:5173";
+
+console.log(corsOptions);
+
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -37,14 +49,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(passport.initialize());
 app.use(helmet());
 app.use(RateLimiter);
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
 
-app.use("/", indexRouter);
 app.use("/sign-up", signUpRouter);
 app.use("/message-board", auth.verifyJWT, messageBoardRouter);
 app.use("/auth", authRouter);
