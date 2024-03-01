@@ -52,7 +52,8 @@ exports.message_post = [
   },
 ];
 
-exports.delete_message_post = async (req, res, next) => {
+exports.message_delete = async (req, res, next) => {
+  //make this operation atomic
   try {
     if (req.body.admin) {
       await Promise.all([
