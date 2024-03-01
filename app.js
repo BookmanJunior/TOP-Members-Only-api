@@ -22,7 +22,6 @@ const RateLimiter = rateLimit({
   limit: 100,
 });
 
-const indexRouter = require("./routes/index");
 const authRouter = require("./routes/authentication");
 const signUpRouter = require("./routes/sign-up");
 const messageBoardRouter = require("./routes/message-board");
@@ -38,8 +37,6 @@ corsOptions.origin =
   process.env.NODE_ENV === "production"
     ? "https://top-members-only-frontend-76ba.vercel.app"
     : "http://localhost:5173";
-
-console.log(corsOptions);
 
 app.use(logger("dev"));
 app.use(express.json());
