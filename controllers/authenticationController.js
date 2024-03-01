@@ -56,15 +56,13 @@ exports.login_post = (req, res, next) => {
       };
 
       const token = jwt.sign({ user: body }, process.env.SECRET_TOKEN_KEY, {
-        expiresIn: "10m",
+        expiresIn: "7d",
       });
-
-      const expirationDate = new Date();
 
       const cookieOptions = {
         secure: true,
         httpOnly: true,
-        maxAge: expirationDate.setDate(expirationDate.getDate() + 7),
+        maxAge: 60 * 60 * 24 * 7 * 1000, //7 days
         sameSite: "none",
       };
 
