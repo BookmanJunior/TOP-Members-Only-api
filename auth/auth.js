@@ -10,12 +10,9 @@ exports.verifyJWT = async (req, res, next) => {
 
   try {
     const data = jwt.verify(token, process.env.SECRET_TOKEN_KEY);
-    req.body.userId = data.user._id;
-    req.body.username = data.user.username;
-    req.body.admin = data.user.admin;
-    req.body.avatar = data.user.avatar;
+    res.locals.currentUser = data.user;
     return next();
   } catch (error) {
-    return res.sendStatus(403);
+    return res.status(500).send(error);
   }
 };
